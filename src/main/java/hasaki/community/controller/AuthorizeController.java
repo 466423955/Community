@@ -2,6 +2,8 @@ package hasaki.community.controller;
 
 import hasaki.community.dto.AccessTokenDTO;
 import hasaki.community.dto.GithubUser;
+import hasaki.community.mapper.UserMapper;
+import hasaki.community.model.User;
 import hasaki.community.provider.GithubProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.UUID;
 
 /**
  * Create by hanzp on 2020-02-26
@@ -26,6 +29,8 @@ public class AuthorizeController {
     private String clientSecret;
     @Value("${github.redirect.uri}")
     private String redirectUri;
+    @Autowired
+    public UserMapper userMapper;
 
     @GetMapping("/callback")
     public String Callback(@RequestParam(name="code") String code,
@@ -38,11 +43,19 @@ public class AuthorizeController {
         accessTokenDTO.setClient_secret(clientSecret);
         accessTokenDTO.setState(state);
         String accessToken = githubProvider.getAccessToken(accessTokenDTO);
-        GithubUser user = githubProvider.getUser(accessToken);
+        GithubUser githubUser = githubProvider.getUser(accessToken);
 
-        if(user != null){
+        if(githubUser != null){
+            User user = new User();
+            user.setToken(UUID.randomUUID().toString());
+            user.setName(githubUser.getName());
+            user.setAccountId(String.valueOf(githubUser.getId()));
+            user.setGmtCreatetime(System.currentTimeMillis());
+            user.setGmtModifytime(user.getGmtCreatetime());
+            user.setThirdParty("Github");
+            userMapper.insert(user);
             //登录成功，写 cookie 和 session
-            request.getSession().setAttribute("user", user);
+            request.getSession().setAttribute("user", githubUser);
             return "redirect:/";
         } else{
             return "redirect:/";
