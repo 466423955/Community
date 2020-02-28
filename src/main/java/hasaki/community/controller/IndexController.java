@@ -1,5 +1,6 @@
 package hasaki.community.controller;
 
+import hasaki.community.dto.PaginationDTO;
 import hasaki.community.dto.QuestionDTO;
 import hasaki.community.mapper.QuestionMapper;
 import hasaki.community.mapper.UserMapper;
@@ -31,7 +32,9 @@ public class IndexController {
 
     @GetMapping("/")
     public String index(HttpServletRequest httpServletRequest,
-                        Model model){
+                        Model model,
+                        @RequestParam(name="page",defaultValue = "1") Integer page,
+                        @RequestParam(name="size",defaultValue = "5") Integer size){
         Cookie[] cookies = httpServletRequest.getCookies();
         if(cookies == null){
             return "index";
@@ -47,8 +50,8 @@ public class IndexController {
             }
         }
 
-        List<QuestionDTO> questionDTOList = questionService.list();
-        model.addAttribute("questions", questionDTOList);
+        PaginationDTO pagination = questionService.list(page, size);
+        model.addAttribute("pagination", pagination);
         return "index";
     }
 }
