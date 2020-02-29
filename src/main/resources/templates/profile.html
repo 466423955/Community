@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="${sectionName}">个人中心</title>
+    <title th:text="${sectionName}"></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css"/>
@@ -16,7 +16,7 @@
 <div class="container-fluid main">
     <div class="row">
         <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
-            <h2><span th:text="${sectionName}"></span></h2>
+            <h2><strong><span th:text="${sectionName}"></span></strong></h2>
             <hr>
             <div th:if="${pagination != null}">
                 <div class="media" th:each="question:${pagination.questions}">
@@ -26,7 +26,7 @@
                         </a>
                     </div>
                     <div class="media-body">
-                        <h4 class="media-heading" th:text="${question.title}">测试标题</h4>
+                        <h4 class="media-heading" th:text="${question.title}"></h4>
                         <span class="text-desc">
                             <span th:text="${question.commentCount}"></span>个回复 • <span
                                 th:text="${question.viewCount}"></span>次浏览 • <span
@@ -67,10 +67,10 @@
             <div class="list-group profile-section">
                 <a href="/profile/questions"
                    th:class="${section == 'questions' ? 'list-group-item active':'list-group-item'}"><span
-                        class="badge">14</span>我的提问</a>
+                        class="badge">14</span><strong>我的提问</strong></a>
                 <a href="/profile/replies"
                    th:class="${section == 'replies' ? 'list-group-item active':'list-group-item'}"><span
-                        class="badge">2</span>我的回复</a>
+                        class="badge">2</span><strong>我的回复</strong></a>
                 <a href="#" th:class="${section == 'questions3' ? 'list-group-item active':'list-group-item'}">Morbi leo
                     risus</a>
                 <a href="#" th:class="${section == 'questions4' ? 'list-group-item active':'list-group-item'}">Porta ac

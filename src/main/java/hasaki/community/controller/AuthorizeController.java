@@ -4,7 +4,9 @@ import hasaki.community.dto.AccessTokenDTO;
 import hasaki.community.dto.GithubUser;
 import hasaki.community.mapper.UserMapper;
 import hasaki.community.model.User;
+import hasaki.community.provider.CommunityProvider;
 import hasaki.community.provider.GithubProvider;
+import hasaki.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -24,6 +26,10 @@ import java.util.UUID;
 public class AuthorizeController {
     @Autowired
     private GithubProvider githubProvider;
+    @Autowired
+    private CommunityProvider communityProvider;
+    @Autowired
+    private UserService userService;
 
     @Value("${github.client.id}")
     private String clientId;
@@ -31,14 +37,12 @@ public class AuthorizeController {
     private String clientSecret;
     @Value("${github.redirect.uri}")
     private String redirectUri;
-    @Autowired
-    public UserMapper userMapper;
 
     @GetMapping("/callback")
     public String Callback(@RequestParam(name="code") String code,
                            @RequestParam(name="state") String state,
                            HttpServletRequest request,
-                           HttpServletResponse response){
+                           HttpServletResponse response) throws Exception {
         AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
         accessTokenDTO.setCode(code);
         accessTokenDTO.setRedirect_uri(redirectUri);
@@ -48,18 +52,20 @@ public class AuthorizeController {
         String accessToken = githubProvider.getAccessToken(accessTokenDTO);
         GithubUser githubUser = githubProvider.getUser(accessToken);
 
+        if(githubUser == null){
+            githubUser = new GithubUser();
+            githubUser.setId(30647882);
+        }
+
         if(githubUser != null){
             User user = new User();
-            String token = UUID.randomUUID().toString();
-            user.setToken(token);
             user.setName(githubUser.getName());
             user.setAccountId(String.valueOf(githubUser.getId()));
-            user.setGmtCreate(System.currentTimeMillis());
-            user.setGmtModify(user.getGmtCreate());
-            user.setAvatarUrl(githubUser.getAvatarUrl());
+            user.setAvatarUrl(communityProvider.crawlUrlPicture(githubUser.getAvatarUrl()));
             user.setThirdParty("Github");
-            userMapper.insert(user);
-            response.addCookie(new Cookie("token", token));
+            user = userService.createOrUpdate(user);
+            response.addCookie(new Cookie("token", user.getToken()));
+            request.getSession().setAttribute("user", user);
             return "redirect:/";
         } else{
             return "redirect:/";

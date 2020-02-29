@@ -23,6 +23,7 @@ public class SessionInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Cookie[] cookies = request.getCookies();
         if(cookies == null){
+            response.sendRedirect("/");
             return false;
         }
         for(Cookie cookie:cookies){
@@ -35,6 +36,7 @@ public class SessionInterceptor implements HandlerInterceptor {
                 return true;
             }
         }
+        response.sendRedirect("/");
         return false;
     }
 

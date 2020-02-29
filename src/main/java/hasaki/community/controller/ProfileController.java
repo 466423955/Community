@@ -37,7 +37,7 @@ public class ProfileController {
             model.addAttribute("sectionName","我的回复");
         }
 
-        User user = (User)request.getSession().getAttribute("User");
+        User user = (User)request.getSession().getAttribute("user");
         if(user == null){
             return "redirect:/";
         }

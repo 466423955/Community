@@ -7,6 +7,12 @@ body{
     margin: 30px;
 }
 
+.community-menu {
+    color: #999;
+    font-size: 15px;
+    margin-bottom: 15px;
+}
+
 .btn-publish{
     float: right;
     margin: 15px;
@@ -21,9 +27,13 @@ body{
     margin-top: 15px;
 }
 
-.text-desc{
+.text-desc {
     font-size: 12px;
     font-weight: normal;
     color: #999;
+}
+
+.community-icon {
+    margin-outside: 5px;
 }
 

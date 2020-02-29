@@ -25,21 +25,21 @@
                     </form>
                     <ul class="nav navbar-nav navbar-right">
                         <li th:if="${session.user != null}">
-                            <a href="/publish">提问</a>
+                            <a href="/publish"><strong>提问</strong></a>
                         </li>
 
                         <li class="dropdown" th:if="${session.user != null}">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                <span th:text="${session.user.getName()}"></span>
-                                <span class="caret"></span>
+                                <strong><span th:text="${session.user.getName()}"></span>
+                                    <span class="caret"></span></strong>
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a href="/profile/questions">我的问题</a></li>
-                                <li><a href="#">退出登录</a></li>
+                                <li><a href="/profile/questions"><strong>我的问题</strong></a></li>
+                                <li><a href="#"><strong>退出登录</strong></a></li>
                             </ul>
                         </li>
                         <li th:if="${session.user == null}">
-                            <a href="https://github.com/login/oauth/authorize?client_id=9a0b063322847b377cc1&redirect_uri=http://localhost:2020/callback&scope=user&state=1">登录</a>
+                            <a href="https://github.com/login/oauth/authorize?client_id=9a0b063322847b377cc1&redirect_uri=http://localhost:2020/callback&scope=user&state=1"><strong>登录</strong></a>
                         </li>
 
                     </ul>
