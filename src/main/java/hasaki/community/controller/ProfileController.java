@@ -20,35 +20,14 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class ProfileController {
     @Autowired
-    private UserMapper userMapper;
-    @Autowired
     private QuestionService questionService;
 
     @GetMapping("/profile/{action}")
-    private String profile(HttpServletRequest httpServletRequest,
-                           @PathVariable(name="action") String action,
+    private String profile(@PathVariable(name="action") String action,
                            @RequestParam(value = "page",defaultValue = "1") Integer page,
                            @RequestParam(value = "size",defaultValue = "5") Integer size,
+                           HttpServletRequest request,
                            Model model){
-        Cookie[] cookies = httpServletRequest.getCookies();
-        if(cookies == null){
-            return "index";
-        }
-        User user = null;
-        for(Cookie cookie:cookies){
-            if(cookie.getName().equals("token")){
-                String token = cookie.getValue();
-                user = userMapper.findByToken(token);
-                if(user != null){
-                    httpServletRequest.getSession().setAttribute("user", user);
-                }
-                break;
-            }
-        }
-        if(user == null){
-            return "redirect:/";
-        }
-
         if("questions".equals(action)){
             model.addAttribute("section","questions");
             model.addAttribute("sectionName","我的提问");
@@ -56,6 +35,11 @@ public class ProfileController {
         if("replies".equals(action)){
             model.addAttribute("section","replies");
             model.addAttribute("sectionName","我的回复");
+        }
+
+        User user = (User)request.getSession().getAttribute("User");
+        if(user == null){
+            return "redirect:/";
         }
 
         PaginationDTO pagination = questionService.list(user.getId(), page, size);
