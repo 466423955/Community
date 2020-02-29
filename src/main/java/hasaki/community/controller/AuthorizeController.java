@@ -55,6 +55,8 @@ public class AuthorizeController {
         if(githubUser == null){
             githubUser = new GithubUser();
             githubUser.setId(30647882);
+            githubUser.setAvatarUrl("https://avatars1.githubusercontent.com/u/30647882?s=60&v=4");
+            githubUser.setName("QHasakiQ");
         }
 
         if(githubUser != null){
