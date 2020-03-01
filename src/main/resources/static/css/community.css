@@ -7,6 +7,10 @@ body{
     margin: 30px;
 }
 
+.jumbotron {
+    margin: 50px;
+}
+
 .community-menu {
     color: #999;
     font-size: 15px;

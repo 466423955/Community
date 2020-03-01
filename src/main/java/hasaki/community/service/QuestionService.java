@@ -2,6 +2,8 @@ package hasaki.community.service;
 
 import hasaki.community.dto.PaginationDTO;
 import hasaki.community.dto.QuestionDTO;
+import hasaki.community.exception.CustomizeErrorCode;
+import hasaki.community.exception.CustomizeException;
 import hasaki.community.mapper.QuestionMapper;
 import hasaki.community.mapper.UserMapper;
 import hasaki.community.model.Question;
@@ -87,6 +89,9 @@ public class QuestionService {
 
     public QuestionDTO getById(Integer id) {
         Question question = questionMapper.selectByPrimaryKey(id);
+        if(question == null){
+            throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+        }
         User user = userMapper.selectByPrimaryKey(question.getCreator());
         QuestionDTO questionDTO = new QuestionDTO();
         BeanUtils.copyProperties(question, questionDTO);
