@@ -2,9 +2,11 @@ package hasaki.community.service;
 
 import hasaki.community.mapper.UserMapper;
 import hasaki.community.model.User;
+import hasaki.community.model.UserExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -16,18 +18,35 @@ public class UserService {
     private UserMapper userMapper;
 
     public User createOrUpdate(User user) {
-        User dbUser = userMapper.findByAccountId("Github", user.getAccountId());
-        if(dbUser == null){
-            user.setToken(UUID.randomUUID().toString());
+        UserExample userExample = new UserExample();
+        userExample.createCriteria()
+                .andThirdpartyEqualTo("Github")
+                .andAccountIdEqualTo(user.getAccountId());
+        List<User> dbUsers = userMapper.selectByExample(userExample);
+        if (dbUsers.size() == 0) {
             user.setGmtCreate(System.currentTimeMillis());
-            user.setGmtModify(user.getGmtCreate());
             userMapper.insert(user);
-            return user;
-        }else{
-            dbUser.setToken(UUID.randomUUID().toString());
-            dbUser.setGmtModify(System.currentTimeMillis());
-            userMapper.update(dbUser);
-            return dbUser;
+        } else {
+            User updateUser = new User();
+            updateUser.setToken(user.getToken());
+            updateUser.setGmtModify(user.getGmtModify());
+            UserExample dbUserExample = new UserExample();
+            dbUserExample.createCriteria()
+                    .andThirdpartyEqualTo("Github")
+                    .andAccountIdEqualTo(user.getAccountId());
+            userMapper.updateByExampleSelective(updateUser, dbUserExample);
         }
+        return findByToken(user.getToken());
+    }
+
+    public User findByToken(String token){
+        UserExample userExample = new UserExample();
+        userExample.createCriteria()
+                .andTokenEqualTo(token);
+        List<User> dbUsers = userMapper.selectByExample(userExample);
+        if (dbUsers.size() == 0) {
+            return null;
+        }
+        return dbUsers.get(0);
     }
 }

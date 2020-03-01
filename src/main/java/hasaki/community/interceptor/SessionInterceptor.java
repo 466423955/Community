@@ -2,6 +2,8 @@ package hasaki.community.interceptor;
 
 import hasaki.community.mapper.UserMapper;
 import hasaki.community.model.User;
+import hasaki.community.model.UserExample;
+import hasaki.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -10,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * Create by hanzp on 2020-02-29
@@ -17,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 @Service
 public class SessionInterceptor implements HandlerInterceptor {
     @Autowired
-    private UserMapper userMapper;
+    private UserService userService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -29,7 +32,7 @@ public class SessionInterceptor implements HandlerInterceptor {
         for(Cookie cookie:cookies){
             if(cookie.getName().equals("token")){
                 String token = cookie.getValue();
-                User user = userMapper.findByToken(token);
+                User user = userService.findByToken(token);
                 if(user != null){
                     request.getSession().setAttribute("user", user);
                 }
