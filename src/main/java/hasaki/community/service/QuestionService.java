@@ -4,6 +4,7 @@ import hasaki.community.dto.PaginationDTO;
 import hasaki.community.dto.QuestionDTO;
 import hasaki.community.exception.CustomizeErrorCode;
 import hasaki.community.exception.CustomizeException;
+import hasaki.community.mapper.QuestionExtMapper;
 import hasaki.community.mapper.QuestionMapper;
 import hasaki.community.mapper.UserMapper;
 import hasaki.community.model.Question;
@@ -27,6 +28,8 @@ public class QuestionService {
     private UserMapper userMapper;
     @Autowired
     private QuestionMapper questionMapper;
+    @Autowired
+    private QuestionExtMapper questionExtMapper;
 
     public PaginationDTO list(Integer page, Integer size) {
         PaginationDTO paginationDTO = new PaginationDTO();
@@ -57,7 +60,7 @@ public class QuestionService {
         return paginationDTO;
     }
 
-    public PaginationDTO list(Integer userId, Integer page, Integer size) {
+    public PaginationDTO list(long userId, Integer page, Integer size) {
         PaginationDTO paginationDTO = new PaginationDTO();
         QuestionExample questionExample = new QuestionExample();
         questionExample.createCriteria().andCreatorEqualTo(userId);
@@ -87,7 +90,7 @@ public class QuestionService {
         return paginationDTO;
     }
 
-    public QuestionDTO getById(Integer id) {
+    public QuestionDTO getById(long id) {
         Question question = questionMapper.selectByPrimaryKey(id);
         if(question == null){
             throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
@@ -101,6 +104,9 @@ public class QuestionService {
 
     public void createOrUpdate(Question question) {
         if(question.getId() == null){
+            question.setViewCount(0);
+            question.setLikeCount(0);
+            question.setCommentCount(0);
             question.setGmtCreate(System.currentTimeMillis());
             question.setGmtModify(System.currentTimeMillis());
             questionMapper.insert(question);
@@ -110,5 +116,12 @@ public class QuestionService {
             questionExample.createCriteria().andIdEqualTo(question.getId());
             questionMapper.updateByExampleSelective(question, questionExample);
         }
+    }
+
+    public void increaseView(long questionId) {
+        Question question = new Question();
+        question.setId(questionId);
+        question.setViewCount(1);
+        questionExtMapper.increaseView(question);
     }
 }

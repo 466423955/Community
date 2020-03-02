@@ -25,11 +25,12 @@ public class UserService {
         List<User> dbUsers = userMapper.selectByExample(userExample);
         if (dbUsers.size() == 0) {
             user.setGmtCreate(System.currentTimeMillis());
+            user.setGmtModify(System.currentTimeMillis());
             userMapper.insert(user);
         } else {
             User updateUser = new User();
             updateUser.setToken(user.getToken());
-            updateUser.setGmtModify(user.getGmtModify());
+            updateUser.setGmtModify(System.currentTimeMillis());
             UserExample dbUserExample = new UserExample();
             dbUserExample.createCriteria()
                     .andThirdpartyEqualTo("Github")

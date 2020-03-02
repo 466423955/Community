@@ -17,7 +17,7 @@
     <div class="row">
         <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
             <h3><strong><span th:text="${question.title}"></span></strong></h3>
-                作者：<span th:text="${question.user.getName()}"></span> ｜
+                作者：<span th:text="${question.user.name}"></span> ｜
                 发布时间：<span th:text="${#dates.format(question.gmtCreate,'yyyy-MM-dd HH:mm:ss')}"></span> ｜
                 阅读数：<span th:text="${question.viewCount}"></span>
             <hr>
