@@ -14,13 +14,13 @@
   </resultMap>
   <update id="increaseView" parameterType="hasaki.community.model.Question">
     update QUESTION
-    set VIEW_COUNT = VIEW_COUNT+#{commentCount}
+    set VIEW_COUNT = VIEW_COUNT+#{viewCount}
     where ID = #{id}
   </update>
 
   <update id="increaseComment" parameterType="hasaki.community.model.Question">
     update QUESTION
-    set COMMENT_COUNT = COMMENT_COUNT+#{viewCount}
+    set COMMENT_COUNT = COMMENT_COUNT+#{commentCount}
     where ID = #{id}
   </update>
 </mapper>

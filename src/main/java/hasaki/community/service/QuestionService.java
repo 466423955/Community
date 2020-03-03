@@ -118,7 +118,7 @@ public class QuestionService {
         }
     }
 
-    public void increaseView(long questionId) {
+    public void increaseView(Long questionId) {
         Question question = new Question();
         question.setId(questionId);
         question.setViewCount(1);

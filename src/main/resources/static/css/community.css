@@ -27,6 +27,10 @@ body{
     height: 40px;
 }
 
+.media-body{
+    padding-top: 10px;
+}
+
 .profile-section {
     margin-top: 15px;
 }
@@ -41,3 +45,11 @@ body{
     margin-outside: 5px;
 }
 
+.comment {
+    margin: 10px 0;
+}
+
+.btn-comment {
+    float: right;
+    margin-bottom: 10px;
+}

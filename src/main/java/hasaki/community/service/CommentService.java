@@ -10,6 +10,7 @@ import hasaki.community.model.Comment;
 import hasaki.community.model.Question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Create by hanzp on 2020-03-02
@@ -22,7 +23,7 @@ public class CommentService {
     private QuestionMapper questionMapper;
     @Autowired
     private QuestionExtMapper questionExtMapper;
-
+    @Transactional
     public void insert(Comment comment) {
         if(comment.getParentType() == null || comment.getParentId() == null){
             throw new CustomizeException(CustomizeErrorCode.TARGET_PARAM_NOT_FOUND);
@@ -48,9 +49,9 @@ public class CommentService {
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
             else{
-                commentMapper.insert(comment);
                 Question dbQuestion = new Question();
                 dbQuestion.setId(question.getId());
+                commentMapper.insert(comment);
                 dbQuestion.setViewCount(1);
                 questionExtMapper.increaseComment(dbQuestion);
             }
