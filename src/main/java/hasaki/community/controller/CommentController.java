@@ -1,6 +1,6 @@
 package hasaki.community.controller;
 
-import hasaki.community.dto.CommentDTO;
+import hasaki.community.dto.CommentCreateDTO;
 import hasaki.community.dto.ResponseResultDTO;
 import hasaki.community.exception.CustomizeErrorCode;
 import hasaki.community.model.Comment;
@@ -22,7 +22,7 @@ public class CommentController {
 
     @ResponseBody
     @PostMapping("/comment")
-    public Object post(@RequestBody CommentDTO commentDTO,
+    public Object post(@RequestBody CommentCreateDTO commentDTO,
                        HttpServletRequest request){
         User user = (User) request.getSession().getAttribute("user");
         if(user == null){
@@ -38,6 +38,6 @@ public class CommentController {
         comment.setCommentator(user.getId());
         commentService.insert(comment);
 
-        return null;
+        return ResponseResultDTO.successOf();
     }
 }

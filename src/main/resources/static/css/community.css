@@ -23,12 +23,13 @@ body{
 }
 
 .media-object{
-    width: 40px;
-    height: 40px;
+    width: 55px;
+    height: 55px;
 }
 
-.media-body{
-    padding-top: 10px;
+.comment-list .media-object{
+    width: 45px;
+    height: 45px;
 }
 
 .profile-section {
@@ -52,4 +53,41 @@ body{
 .btn-comment {
     float: right;
     margin-bottom: 10px;
+}
+
+.comment-sp-top {
+    margin-top: 0;
+}
+
+.comment-sp-bottom {
+    margin-bottom: 0;
+}
+
+.comment-count {
+    margin-top: 20px;
+}
+
+.comment-menu {
+    color: #999;
+    margin-top: 5px;
+}
+
+.comment-menu .comment-icon {
+    font-size: 15px;
+    margin-right: 3px;
+    margin-left: 3px;
+    cursor: pointer;
+}
+
+.comment-menu .comment-icon:hover {
+    color: #499ef3;
+}
+
+.comment-list .media {
+    margin-top: 7px;
+    margin-bottom: 7px;
+}
+
+.comment-content {
+    margin: 5px;
 }
