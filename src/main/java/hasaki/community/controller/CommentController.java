@@ -1,16 +1,20 @@
 package hasaki.community.controller;
 
 import hasaki.community.dto.CommentCreateDTO;
+import hasaki.community.dto.CommentDTO;
 import hasaki.community.dto.ResponseResultDTO;
+import hasaki.community.enums.CommentTypeEnum;
 import hasaki.community.exception.CustomizeErrorCode;
 import hasaki.community.model.Comment;
 import hasaki.community.model.User;
 import hasaki.community.service.CommentService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * Create by hanzp on 2020-03-02
@@ -28,6 +32,9 @@ public class CommentController {
         if(user == null){
             return ResponseResultDTO.errorOf(CustomizeErrorCode.NO_LOGIN);
         }
+        if(commentDTO.getContent() == null || StringUtils.isEmpty(commentDTO.getContent())){
+            return ResponseResultDTO.errorOf(CustomizeErrorCode.COMMENT_IS_EMPTY);
+        }
         Comment comment = new Comment();
         comment.setParentId(commentDTO.getParentId());
         comment.setDescription(commentDTO.getContent());
@@ -35,9 +42,16 @@ public class CommentController {
         comment.setGmtCreate(System.currentTimeMillis());
         comment.setGmtModify(System.currentTimeMillis());
         comment.setLikeCount(0L);
+        comment.setCommentCount(0);
         comment.setCommentator(user.getId());
         commentService.insert(comment);
-
         return ResponseResultDTO.successOf();
+    }
+
+    @ResponseBody
+    @RequestMapping(value="/comment/{id}", method=RequestMethod.GET)
+    public Object post(@PathVariable("id") Long ParentId){
+        List<CommentDTO> commentDTOList = commentService.getByParentId(ParentId, CommentTypeEnum.COMMENT);
+        return ResponseResultDTO.successOf(commentDTOList);
     }
 }

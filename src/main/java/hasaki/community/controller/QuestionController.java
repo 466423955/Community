@@ -2,6 +2,7 @@ package hasaki.community.controller;
 
 import hasaki.community.dto.CommentDTO;
 import hasaki.community.dto.QuestionDTO;
+import hasaki.community.enums.CommentTypeEnum;
 import hasaki.community.service.CommentService;
 import hasaki.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class QuestionController {
     public String question(@PathVariable(name="id") Long id,
                            Model model){
         QuestionDTO questionDTO = questionService.getById(id);
-        List<CommentDTO> commentDTOList = commentService.getByQuestionId(id);
+        List<CommentDTO> commentDTOList = commentService.getByParentId(id, CommentTypeEnum.QUESTION);
         questionService.increaseView(id);
         model.addAttribute("question", questionDTO);
         model.addAttribute("commentList", commentDTOList);

@@ -46,8 +46,25 @@ body{
     margin-outside: 5px;
 }
 
+.community-time {
+    margin-outside: 5px;
+    font-size: 10px;
+}
+
 .comment {
     margin: 10px 0;
+}
+
+.sub-comment {
+    border-radius: 10px;
+    margin-top: 10px;
+    border: 1px solid #CCCCCC;
+    padding-top: 15px;
+}
+
+.sub-comment .btn {
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .btn-comment {
@@ -61,6 +78,11 @@ body{
 
 .comment-sp-bottom {
     margin-bottom: 0;
+}
+
+.comment-sub-sp {
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .comment-count {

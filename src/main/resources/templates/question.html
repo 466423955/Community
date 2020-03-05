@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/css/community.css"/>
     <script src="/js/jquery-3.4.1.min.js"></script>
     <script src="/js/bootstrap.min.js" type="application/javascript"></script>
+    <script src="/js/moment.js"></script>
     <script src="/js/community.js"></script>
 </head>
 <body>
@@ -52,14 +53,21 @@
                         </a>
                     </div>
                     <div class="media-body">
-                        <h4 class="media-heading">
+                        <h5 class="media-heading">
                             <strong><span th:text="${comment.user.getName()}"></span></strong>
-                        </h4>
+                        </h5>
                         <span class="comment-content" th:text="${comment.description}"></span>
                         <div class="comment-menu">
                             <span class="glyphicon glyphicon-thumbs-up comment-icon"></span>
-                            <span class="glyphicon glyphicon-comment comment-icon"></span>
-                            <span class="pull-right comment-icon" th:text="${#dates.format(comment.gmtCreate, 'yyyy-MM-dd hh:mm:ss')}"></span>
+                            <span class="glyphicon glyphicon-comment comment-icon" th:onclick="'collapseComments('+${comment.id}+')'" th:text="${comment.commentCount}"></span>
+                            <span class="pull-right community-time" th:text="${#dates.format(comment.gmtCreate, 'yyyy-MM-dd hh:mm:ss')}"></span>
+                        </div>
+                        <!-- 二级评论 -->
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 comment-sp-top collapse sub-comment" th:id="${'comment-'+comment.id}">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <input th:id="'comment-sub-content-'+${comment.id}" type="text" class="form-control" placeholder="回复">
+                                <button type="button" class="btn btn-success pull-right" th:onclick="'comment_from_comment('+${comment.id}+')'">回复</button>
+                            </div>
                         </div>
                     </div>
                     <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -82,7 +90,7 @@
                 </div>
                 <input type="hidden" id="question_id" name="question_id" th:value="${question.id}">
                 <textarea class="form-control comment" id="comment_content" rows="6"></textarea>
-                <button type="button" class="btn btn-success btn-comment" onclick="comment_post()">回复</button>
+                <button type="button" class="btn btn-success btn-comment" onclick="comment_from_question()">回复</button>
             </div>
         </div>
 

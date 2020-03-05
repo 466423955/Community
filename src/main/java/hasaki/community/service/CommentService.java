@@ -4,10 +4,7 @@ import hasaki.community.dto.CommentDTO;
 import hasaki.community.enums.CommentTypeEnum;
 import hasaki.community.exception.CustomizeErrorCode;
 import hasaki.community.exception.CustomizeException;
-import hasaki.community.mapper.CommentMapper;
-import hasaki.community.mapper.QuestionExtMapper;
-import hasaki.community.mapper.QuestionMapper;
-import hasaki.community.mapper.UserMapper;
+import hasaki.community.mapper.*;
 import hasaki.community.model.Comment;
 import hasaki.community.model.CommentExample;
 import hasaki.community.model.Question;
@@ -32,6 +29,8 @@ public class CommentService {
     @Autowired
     private CommentMapper commentMapper;
     @Autowired
+    private CommentExtMapper commentExtMapper;
+    @Autowired
     private QuestionMapper questionMapper;
     @Autowired
     private QuestionExtMapper questionExtMapper;
@@ -52,7 +51,11 @@ public class CommentService {
                 throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
             }
             else{
+                Comment parent = new Comment();
+                parent.setId(comment.getParentId());
+                parent.setCommentCount(1);
                 commentMapper.insert(comment);
+                commentExtMapper.increaseCommentCount(parent);
             }
         }else{
             //回复问题
@@ -70,12 +73,13 @@ public class CommentService {
         }
     }
 
-    public List<CommentDTO> getByQuestionId(Long id) {
+    public List<CommentDTO> getByParentId(Long id, CommentTypeEnum typeEnum) {
         List<CommentDTO> commentDTOS = new ArrayList<>();
         CommentExample example = new CommentExample();
         example.createCriteria()
                 .andParentIdEqualTo(id)
-                .andParentTypeEqualTo(CommentTypeEnum.QUESTION.getType());
+                .andParentTypeEqualTo(typeEnum.getType());
+        example.setOrderByClause(" gmt_create desc ");
         List<Comment> comments = commentMapper.selectByExampleWithBLOBs(example);
 
         Map<Long,User> userMap = new HashMap();
@@ -92,9 +96,6 @@ public class CommentService {
             commentDTO.setUser(user);
             commentDTOS.add(commentDTO);
         }
-
-
-
         return commentDTOS;
     }
 }
