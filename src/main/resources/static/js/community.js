@@ -43,54 +43,145 @@ function comment_post(parentId, parentType, content) {
     })
 }
 
+//分页展示二级回复
+function collapseCommentsByNav(parentId, page) {
+    document.getElementById("commentList2-"+ parentId).remove();
+    document.getElementById('comment-pagination-'+parentId).remove();
+    getSubComment(parentId, page);
+}
+
 //展开二级回复
-function collapseComments(parentId) {
+function collapseComments(parentId, page) {
     var subCommentContainer = document.getElementById("comment-" + parentId);
-    debugger;
     if (subCommentContainer.classList.contains("in")) {
         subCommentContainer.classList.remove("in");
     } else {
-        if (subCommentContainer.children.length == 1) {
+        if (document.getElementById("commentList-" + parentId).children.length == 0) {
             //展开前获取数据
-            $.getJSON("/comment/" + parentId, function (data) {
-                $.each(data.data.reverse(), function (index, comment) {
-                    var mediaLeftElement = $("<div/>", {
-                        "class": "media-left"
-                    }).append($("<img/>", {
-                        "class": "media-object img-rounded",
-                        "src": comment.user.avatarurl
-                    }));
-
-                    var mediaBodyElement = $("<div/>", {
-                        "class": "media-body"
-                    }).append($("<h5/>", {
-                        "class": "media-heading",
-                        "html": comment.user.name
-                    })).append($("<div/>", {
-                        "class": "comment-content",
-                        "html": comment.description
-                    })).append($("<div/>", {
-                        "class": "comment-menu"
-                    }).append($("<span/>", {
-                        "class": "pull-right community-time ",
-                        "html": moment(comment.gmtCreate).format('YYYY-MM-DD HH:mm:ss')
-                    })));
-
-                    var mediaElement = $("<div/>", {
-                        "class": "col-lg-12 col-md-12 col-sm-12 col-xs-12 comment-sp-top media"
-                    }).append(mediaLeftElement).append(mediaBodyElement);
-
-                    var spElement = $("<hr>", {
-                        "class": "col-lg-12 col-md-12 col-sm-12 col-xs-12 comment-sub-sp"
-                    });
-
-                    var commentElement = $("<div/>", {
-                        "class": "col-lg-12 col-md-12 col-sm-12 col-xs-12 comments"
-                    }).append(mediaElement).append(spElement);
-                    $("#comment-" + parentId).prepend(commentElement);
-                });
-            });
+            getSubComment(parentId, page);
         }
         subCommentContainer.classList.add("in");
     }
+}
+
+function getSubComment(parentId, page){
+    $.getJSON("/comment/" + parentId + '?page=' + page + '&size=1', function (returnData) {
+        var pagination = returnData.data;
+
+        //循环显示二级评论
+        var commentListElement = $("<div/>", {"id": "commentList2-" + parentId});
+        $.each(pagination.datas, function (index, comment) {
+            var mediaLeftElement = $("<div/>", {
+                "class": "media-left"
+            }).append($("<img/>", {
+                "class": "media-object img-rounded",
+                "src": comment.user.avatarurl
+            }));
+
+            var mediaBodyElement = $("<div/>", {
+                "class": "media-body"
+            }).append($("<h5/>", {
+                "class": "media-heading",
+                "html": comment.user.name
+            })).append($("<div/>", {
+                "id":"content-"+index,
+                "class": "comment-content",
+                "html": comment.description
+            })).append($("<div/>", {
+                "class": "comment-menu"
+            }).append($("<span/>", {
+                "class": "pull-right community-time ",
+                "html": moment(comment.gmtCreate).format('YYYY-MM-DD HH:mm:ss')
+            })));
+
+            var mediaElement = $("<div/>", {
+                "class": "col-lg-12 col-md-12 col-sm-12 col-xs-12 comment-sp-top media"
+            }).append(mediaLeftElement).append(mediaBodyElement);
+
+            var spElement = $("<hr>", {
+                "class": "col-lg-12 col-md-12 col-sm-12 col-xs-12 comment-sub-sp"
+            });
+
+            var commentElement = $("<div/>", {
+                "class": "col-lg-12 col-md-12 col-sm-12 col-xs-12 comments",
+            }).append(mediaElement).append(spElement);
+            commentListElement.append(commentElement);
+        });
+        $("#commentList-" + parentId).prepend(commentListElement);
+
+        //二级评论页码
+        var navElement = $("<ul/>", {
+            "class":"pagination",
+            "id":"comment-pagination-"+parentId
+        });
+        if(pagination.showFirstPage){
+            navElement
+                .append($("<li/>")
+                    .append($("<span/>", {
+                        "onclick":"collapseCommentsByNav("+ parentId +",1)",
+                        "aria-hidden": "true",
+                        "text":"<<",
+                        "aria-label":"firstpage"
+                    }))
+                );
+        }
+        if(pagination.showPrevious){
+            navElement
+                .append($("<li/>")
+                    .append($("<span/>", {
+                        "onclick":"collapseCommentsByNav("+ parentId +","+ pagination.page-1 +")",
+                        "aria-hidden": "true",
+                        "text":"<",
+                        "aria-label":"Previous"
+                    }))
+                );
+        }
+        $.each(pagination.pages, function (index, curpage) {
+            if(curpage == pagination.page){
+                navElement
+                    .append($("<li/>")
+                        .append($("<span/>", {
+                            "onclick":"collapseCommentsByNav("+ parentId +","+ curpage +")",
+                            "aria-hidden": "true",
+                            "class":"active",
+                            "text": curpage,
+                            "aria-label": curpage
+                        }))
+                    );
+            } else{
+                navElement
+                    .append($("<li/>")
+                        .append($("<span/>", {
+                            "onclick":"collapseCommentsByNav("+ parentId +","+ curpage +")",
+                            "aria-hidden": "true",
+                            "text": curpage,
+                            "aria-label": curpage
+                        }))
+                    );
+            }
+        })
+        if(pagination.showNext){
+            navElement
+                .append($("<li/>")
+                    .append($("<span/>", {
+                        "onclick":"collapseCommentsByNav("+ parentId +","+ pagination.page+1 +")",
+                        "aria-hidden": "true",
+                        "text":">",
+                        "aria-label":"Next"
+                    }))
+                );
+        }
+        if(pagination.showEndPage){
+            navElement
+                .append($("<li/>")
+                    .append($("<span/>", {
+                        "onclick":"collapseCommentsByNav("+ pagination.totalPage +",1)",
+                        "aria-hidden": "true",
+                        "text":">>",
+                        "aria-label":"endpage"
+                    }))
+                );
+        }
+        $("#comment-nav-" + parentId).append(navElement);
+    });
 }

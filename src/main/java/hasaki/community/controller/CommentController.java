@@ -2,6 +2,7 @@ package hasaki.community.controller;
 
 import hasaki.community.dto.CommentCreateDTO;
 import hasaki.community.dto.CommentDTO;
+import hasaki.community.dto.PaginationDTO;
 import hasaki.community.dto.ResponseResultDTO;
 import hasaki.community.enums.CommentTypeEnum;
 import hasaki.community.exception.CustomizeErrorCode;
@@ -50,8 +51,10 @@ public class CommentController {
 
     @ResponseBody
     @RequestMapping(value="/comment/{id}", method=RequestMethod.GET)
-    public Object post(@PathVariable("id") Long ParentId){
-        List<CommentDTO> commentDTOList = commentService.getByParentId(ParentId, CommentTypeEnum.COMMENT);
+    public Object post(@PathVariable("id") Long ParentId,
+                       @RequestParam(value = "page",defaultValue = "1") Integer page,
+                       @RequestParam(value = "size",defaultValue = "5") Integer size){
+        PaginationDTO<CommentDTO> commentDTOList = commentService.getByParentId(ParentId, CommentTypeEnum.COMMENT, page, size);
         return ResponseResultDTO.successOf(commentDTOList);
     }
 }

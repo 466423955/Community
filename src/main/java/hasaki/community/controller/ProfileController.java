@@ -1,6 +1,7 @@
 package hasaki.community.controller;
 
 import hasaki.community.dto.PaginationDTO;
+import hasaki.community.dto.QuestionDTO;
 import hasaki.community.mapper.UserMapper;
 import hasaki.community.model.User;
 import hasaki.community.service.QuestionService;
@@ -42,7 +43,7 @@ public class ProfileController {
             return "redirect:/";
         }
 
-        PaginationDTO pagination = questionService.list(user.getId(), page, size);
+        PaginationDTO<QuestionDTO> pagination = questionService.list(user.getId(), page, size);
         model.addAttribute("pagination", pagination);
         return "profile";
     }

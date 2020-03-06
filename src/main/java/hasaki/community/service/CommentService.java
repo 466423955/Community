@@ -1,14 +1,14 @@
 package hasaki.community.service;
 
 import hasaki.community.dto.CommentDTO;
+import hasaki.community.dto.PaginationDTO;
+import hasaki.community.dto.QuestionDTO;
 import hasaki.community.enums.CommentTypeEnum;
 import hasaki.community.exception.CustomizeErrorCode;
 import hasaki.community.exception.CustomizeException;
 import hasaki.community.mapper.*;
-import hasaki.community.model.Comment;
-import hasaki.community.model.CommentExample;
-import hasaki.community.model.Question;
-import hasaki.community.model.User;
+import hasaki.community.model.*;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,15 +73,25 @@ public class CommentService {
         }
     }
 
-    public List<CommentDTO> getByParentId(Long id, CommentTypeEnum typeEnum) {
-        List<CommentDTO> commentDTOS = new ArrayList<>();
+    public PaginationDTO<CommentDTO> getByParentId(Long id, CommentTypeEnum typeEnum, Integer page, Integer size) {
         CommentExample example = new CommentExample();
         example.createCriteria()
                 .andParentIdEqualTo(id)
                 .andParentTypeEqualTo(typeEnum.getType());
         example.setOrderByClause(" gmt_create desc ");
-        List<Comment> comments = commentMapper.selectByExampleWithBLOBs(example);
 
+        long totalCount = commentMapper.countByExample(example);
+        PaginationDTO<CommentDTO> paginationDTO = new PaginationDTO();
+        paginationDTO.setPagination(totalCount, page, size);
+        if(page < 1)   {
+            page = 1;
+        }
+        if(page > paginationDTO.getTotalPage()){
+            page = paginationDTO.getTotalPage();
+        }
+        List<CommentDTO> commentDTOS = new ArrayList<>();
+        Integer offset = size * (page - 1);
+        List<Comment> comments = commentMapper.selectByExampleWithBLOBsWithRowbounds(example, new RowBounds(offset, size));
         Map<Long,User> userMap = new HashMap();
         for(Comment comment:comments){
             CommentDTO commentDTO = new CommentDTO();
@@ -96,6 +106,7 @@ public class CommentService {
             commentDTO.setUser(user);
             commentDTOS.add(commentDTO);
         }
-        return commentDTOS;
+        paginationDTO.setDatas(commentDTOS);
+        return paginationDTO;
     }
 }

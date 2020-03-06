@@ -19,7 +19,7 @@
             <h2><strong><span th:text="${sectionName}"></span></strong></h2>
             <hr>
             <div th:if="${pagination != null}">
-                <div class="media" th:each="question:${pagination.questions}">
+                <div class="media" th:each="question:${pagination.datas}">
                     <div class="media-left">
                         <a href="#">
                             <img class="media-object img-rounded" th:src="${question.user.getAvatarurl()}">

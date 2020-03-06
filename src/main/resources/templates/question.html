@@ -53,9 +53,10 @@
                         </strong>
                     </h4>
                 </div>
+                <!--评论内容-->
                 <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12 comment-sp-top">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 comment-sp-top media"
-                     th:each="comment:${commentList}">
+                     th:each="comment:${paginationComment.datas}">
                     <div class="media-left">
                         <a href="#">
                             <img class="media-object img-rounded" th:src="${comment.user.getAvatarurl()}">
@@ -69,14 +70,23 @@
                         <div class="comment-menu">
                             <span class="glyphicon glyphicon-thumbs-up comment-icon"></span>
                             <span class="glyphicon glyphicon-comment comment-icon"
-                                  th:onclick="'collapseComments('+${comment.id}+')'"></span>
+                                  th:onclick="'collapseComments('+${comment.id}+',1)'"></span>
                             <span class="comment-icon" th:text="${comment.commentCount}"></span>
                             <span class="pull-right community-time"
                                   th:text="${#dates.format(comment.gmtCreate, 'yyyy-MM-dd hh:mm:ss')}"></span>
                         </div>
                         <!-- 二级评论 -->
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 comment-sp-top collapse sub-comment"
-                             th:id="${'comment-'+comment.id}">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 comment-sp-top collapse sub-comment" th:id="${'comment-'+comment.id}">
+                            <div th:id="${'commentList-'+comment.id}">
+                            </div>
+
+                            <!--二级评论页码-->
+                            <div th:if="${comment.commentCount > 0}">
+                                <nav aria-label="Page navigation" th:id="${'comment-nav-'+comment.id}">
+                                </nav>
+                            </div>
+
+                            <!--二级评论回复-->
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <input th:id="'comment-sub-content-'+${comment.id}" type="text" class="form-control"
                                        placeholder="回复">
@@ -87,6 +97,41 @@
                         </div>
                     </div>
                     <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                </div>
+                <!--回复列表页码-->
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 comment-sp-top"
+                     th:if="${question.commentCount > 0}">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <li th:if="${paginationComment.showFirstPage}">
+                                <a th:href="'/question/'+${question.id}+'?page=1'" aria-label="firstpage">
+                                    <span aria-hidden="true">&lt;&lt;</span>
+                                </a>
+                            </li>
+                            <li th:if="${paginationComment.showPrevious}">
+                                <a th:href="'/question/'+${question.id}+'?page='+${paginationComment.page-1}"
+                                   aria-label="Previous">
+                                    <span aria-hidden="true">&lt;</span>
+                                </a>
+                            </li>
+                            <li th:each="page : ${paginationComment.pages}"
+                                th:class="${paginationComment.page == page} ? 'active':''">
+                                <a th:href="'/question/'+${question.id}+'?page='+${page}" th:text="${page}"></a>
+                            </li>
+                            <li th:if="${paginationComment.showNext}">
+                                <a th:href="'/question/'+${question.id}+'?page='+${paginationComment.page+1}"
+                                   aria-label="Next">
+                                    <span aria-hidden="true">&gt;</span>
+                                </a>
+                            </li>
+                            <li th:if="${paginationComment.showEndPage}">
+                                <a th:href="'/question/'+${question.id}+'?page='+${paginationComment.totalPage}"
+                                   aria-label="endpage">
+                                    <span aria-hidden="true">&gt;&gt;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
 
@@ -110,7 +155,9 @@
             </div>
         </div>
 
+        <!--右侧信息-->
         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+            <!--发帖人信息-->
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <h4><strong>发起人</strong></h4>
                 <div class="media">
@@ -129,18 +176,18 @@
                     </div>
                 </div>
             </div>
-            <!--            相关问题            -->
+            <!--相关问题-->
             <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <h4><strong>相关问题</strong></h4>
                 <div class="list-group" th:each="related:${relatedQuestion}">
                     <a th:href="'/question/'+${related.id}" class="list-group-item">
-                        <h5 class="list-group-item-heading"><strong><span th:text="${related.title}"></span></strong></h5>
+                        <h5 class="list-group-item-heading"><strong><span th:text="${related.title}"></span></strong>
+                        </h5>
                         <p class="list-group-item-text related-question-content" th:text="${related.description}"></p>
                     </a>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
