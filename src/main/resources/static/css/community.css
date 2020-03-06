@@ -113,3 +113,17 @@ body{
 .comment-content {
     margin: 5px;
 }
+
+.question-tag {
+    height: 15px;
+    margin: 5px;
+}
+
+.related-question-content {
+    word-break: break-all;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}

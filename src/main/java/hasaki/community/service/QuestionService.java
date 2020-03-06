@@ -10,8 +10,9 @@ import hasaki.community.mapper.UserMapper;
 import hasaki.community.model.Question;
 import hasaki.community.model.QuestionExample;
 import hasaki.community.model.User;
-import hasaki.community.model.UserExample;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,15 +47,7 @@ public class QuestionService {
 
         Integer offset = size * (page - 1);
         List<Question> questionList = questionMapper.selectByExampleWithRowbounds(new QuestionExample(), new RowBounds(offset, size));
-        List<QuestionDTO> questionDTOS = new ArrayList<>();
-
-        for(Question question:questionList){
-            User user = userMapper.selectByPrimaryKey(question.getCreator());
-            QuestionDTO questionDTO = new QuestionDTO();
-            BeanUtils.copyProperties(question, questionDTO);
-            questionDTO.setUser(user);
-            questionDTOS.add(questionDTO);
-        }
+        List<QuestionDTO> questionDTOS = getDTOSByQuestion(questionList);
         paginationDTO.setQuestions(questionDTOS);
 
         return paginationDTO;
@@ -78,14 +71,7 @@ public class QuestionService {
         QuestionExample example = new QuestionExample();
         example.createCriteria().andCreatorEqualTo(userId);
         List<Question> questionList = questionMapper.selectByExampleWithRowbounds(example, new RowBounds(offset, size));
-        List<QuestionDTO> questionDTOS = new ArrayList<>();
-        for(Question question:questionList){
-            User user = userMapper.selectByPrimaryKey(question.getCreator());
-            QuestionDTO questionDTO = new QuestionDTO();
-            BeanUtils.copyProperties(question, questionDTO);
-            questionDTO.setUser(user);
-            questionDTOS.add(questionDTO);
-        }
+        List<QuestionDTO> questionDTOS = getDTOSByQuestion(questionList);
         paginationDTO.setQuestions(questionDTOS);
         return paginationDTO;
     }
@@ -95,10 +81,7 @@ public class QuestionService {
         if(question == null){
             throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
         }
-        User user = userMapper.selectByPrimaryKey(question.getCreator());
-        QuestionDTO questionDTO = new QuestionDTO();
-        BeanUtils.copyProperties(question, questionDTO);
-        questionDTO.setUser(user);
+        QuestionDTO questionDTO = getDTOByQuestion(question);
         return questionDTO;
     }
 
@@ -123,5 +106,38 @@ public class QuestionService {
         question.setId(questionId);
         question.setViewCount(1);
         questionExtMapper.increaseView(question);
+    }
+
+    public List<QuestionDTO> getRelated(QuestionDTO questionDTO) {
+        if(StringUtils.isEmpty(questionDTO.getTag())){
+            return new ArrayList<>();
+        }
+        Question question = new Question();
+        question.setId(questionDTO.getId());
+        question.setTag(StringUtils.joinWith("|", questionDTO.getTag().split(",")));
+        List<Question> questions = questionExtMapper.selectRelated(question);
+        if(questions.size() > 10){
+            return getDTOSByQuestion(questions.subList(0, 9));
+        }
+        return getDTOSByQuestion(questions);
+    }
+
+    @NotNull
+    public List<QuestionDTO> getDTOSByQuestion(List<Question> questionList) {
+        List<QuestionDTO> questionDTOS = new ArrayList<>();
+        for (Question question : questionList) {
+            QuestionDTO questionDTO = getDTOByQuestion(question);
+            questionDTOS.add(questionDTO);
+        }
+        return questionDTOS;
+    }
+
+    @NotNull
+    public QuestionDTO getDTOByQuestion(Question question) {
+        User user = userMapper.selectByPrimaryKey(question.getCreator());
+        QuestionDTO questionDTO = new QuestionDTO();
+        BeanUtils.copyProperties(question, questionDTO);
+        questionDTO.setUser(user);
+        return questionDTO;
     }
 }

@@ -6,40 +6,40 @@ function comment_from_question() {
 }
 
 function comment_from_comment(commentId) {
-    var content = $("#comment-sub-content-"+commentId).val();
+    var content = $("#comment-sub-content-" + commentId).val();
     comment_post(commentId, 2, content);
 }
 
 function comment_post(parentId, parentType, content) {
-    if(!content){
+    if (!content) {
         alert("回复内容不允许为空！");
         return;
     }
 
     $.ajax({
-        type:"POST",
-        contentType:"application/json",
-        url:"/comment",
+        type: "POST",
+        contentType: "application/json",
+        url: "/comment",
         data: JSON.stringify({
-            "parentId":parentId,
-            "content":content,
-            "type":parentType
+            "parentId": parentId,
+            "content": content,
+            "type": parentType
         }),
         success: function (response) {
-            if(response.code == 200){
+            if (response.code == 200) {
                 //$("#comment_section").hide();
                 window.location.reload();
-            }else if(response.code == 2003){
+            } else if (response.code == 2003) {
                 var isAccept = confirm(response.message);
-                if(isAccept){
+                if (isAccept) {
                     window.open("https://github.com/login/oauth/authorize?client_id=9a0b063322847b377cc1&redirect_uri=http://localhost:2020/callback&scope=user&state=1");
-                    window.localStorage.setItem("closable",true);
+                    window.localStorage.setItem("closable", true);
                 }
-            }else {
+            } else {
                 alert(response.message);
             }
         },
-        dataType:"json"
+        dataType: "json"
     })
 }
 
@@ -47,7 +47,7 @@ function comment_post(parentId, parentType, content) {
 function collapseComments(parentId) {
     var subCommentContainer = document.getElementById("comment-" + parentId);
     debugger;
-    if(subCommentContainer.classList.contains("in")){
+    if (subCommentContainer.classList.contains("in")) {
         subCommentContainer.classList.remove("in");
     } else {
         if (subCommentContainer.children.length == 1) {
@@ -80,8 +80,8 @@ function collapseComments(parentId) {
                         "class": "col-lg-12 col-md-12 col-sm-12 col-xs-12 comment-sp-top media"
                     }).append(mediaLeftElement).append(mediaBodyElement);
 
-                    var spElement = $("<hr>",{
-                        "class" : "col-lg-12 col-md-12 col-sm-12 col-xs-12 comment-sub-sp"
+                    var spElement = $("<hr>", {
+                        "class": "col-lg-12 col-md-12 col-sm-12 col-xs-12 comment-sub-sp"
                     });
 
                     var commentElement = $("<div/>", {
