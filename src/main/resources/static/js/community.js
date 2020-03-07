@@ -185,3 +185,28 @@ function getSubComment(parentId, page){
         $("#comment-nav-" + parentId).append(navElement);
     });
 }
+
+function selectTag(value) {
+    var orignValue = $("#tag").val();
+    if(orignValue != null && orignValue != ""){
+        var values = orignValue.split(",");
+        if(values.indexOf(value) >= 0){
+            while (values.indexOf(value) >= 0){
+                values.splice(values.indexOf(value), 1);
+            }
+        } else {
+            values.push(value);
+        }
+        $("#tag").val(values.join(","));
+    } else {
+        $("#tag").val(value);
+    }
+}
+
+function showSelectTag() {
+    $("#selectTag").show();
+}
+
+function hiddenSelectTag() {
+    $("#selectTag").hide();
+}

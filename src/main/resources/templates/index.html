@@ -12,12 +12,12 @@
 <script type="application/javascript">
     window.onload = function () {
         var closable = window.localStorage.getItem("closable");
-        if("true" == closable){
+        if ("true" == closable) {
             window.close();
             window.localStorage.removeItem("closable");
         }
     }
-    </script>
+</script>
 <body>
 
 <div th:insert="navigation :: nav"></div>
