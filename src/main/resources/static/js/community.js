@@ -202,11 +202,3 @@ function selectTag(value) {
         $("#tag").val(value);
     }
 }
-
-function showSelectTag() {
-    $("#selectTag").show();
-}
-
-function hiddenSelectTag() {
-    $("#selectTag").hide();
-}

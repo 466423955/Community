@@ -50,11 +50,9 @@
                 </div>
                 <div class="form-group">
                     <label for="tag">添加标签：</label>
-                    <!--                    <div tabindex="100" onMouseout="hiddenSelectTag()" id="tag-div">-->
-                    <div tabindex="100" id="tag-div">
+                    <div id="tag-div">
                         <input type="text" class="form-control" id="tag" name="tag" placeholder="输入标签以“，”号分隔"
                                th:value="${tag}" autocomplete="off">
-                        <!--                               th:value="${tag}" autocomplete="off" onFocus="showSelectTag()">-->
                         <div id="selectTag" hidden="true">
                             <ul class="nav nav-tabs" role="tablist">
                                 <li role="presentation" class="active">
@@ -64,19 +62,21 @@
                                     <a href="#structure" aria-controls="structure" role="tab" data-toggle="tab">平台框架</a>
                                 </li>
                             </ul>
-                            <div class="tab-content">
-                                <div role="tabpanel" class="tab-pane active" id="language">
-                                    <span class="label label-info question-tag" onclick="selectTag('Java')">Java</span>
+                            <div class="tab-content tag-tab">
+                                <div role="tabpanel" class="tab-pane question-tag active" id="language">
+                                    <span class="label label-info question-tag" onclick="selectTag('Java')">
+                                        <span class="glyphicon glyphicon-tags"></span> Java
+                                    </span>
                                 </div>
-                                <div role="tabpanel" class="tab-pane" id="structure">
+                                <div role="tabpanel" class="tab-pane question-tag" id="structure">
                                     <span class="label label-info question-tag"
-                                          onclick="selectTag('Spring')">Spring</span>
+                                          onclick="selectTag('Spring')">
+                                        <span class="glyphicon glyphicon-tags"></span> Spring
+                                    </span>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-
                 </div>
 
                 <div class="container-fluid main">

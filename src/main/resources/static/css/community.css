@@ -127,3 +127,9 @@ body{
     -webkit-line-clamp: 2;
     overflow: hidden;
 }
+
+.tag-tab {
+    border-radius: 5px;
+    border: 1px solid #CCCCCC;
+    padding: 10px;
+}
